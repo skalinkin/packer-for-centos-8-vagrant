@@ -83,8 +83,8 @@
             {
                 "type": "vagrant-cloud",
                 "box_tag": "skalinkin/centos-8",
-                "version": "2021.18.0",
-                "version_description": "VirtualBox 6.1.16, Vagrant 2.2.14, Packer 1.6.6, Linux 4.18.0-240.1.1.el8_3.x86_64"
+                "version": "2021.18.1",
+                "version_description": "VirtualBox 6.1.16, Vagrant 2.2.14, Packer 1.6.6, Linux 4.18.0-240.1.1.el8_3.x86_64, adding wget and cockpit"
             }
         ]
     ]
