@@ -28,3 +28,6 @@ code .
 
 Ctrl+Shift+T
 
+## Box page at Vagrant Cloud
+
+https://app.vagrantup.com/skalinkin/boxes/centos-8
