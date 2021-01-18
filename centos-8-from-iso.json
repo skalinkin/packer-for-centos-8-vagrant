@@ -2,12 +2,90 @@
     "builders": [
         {
             "type": "virtualbox-iso",
+            "hard_drive_interface": "sata",
             "guest_os_type": "RedHat_64",
-            "iso_url": "http://mirror.steadfastnet.com/centos/8.3.2011/isos/x86_64/CentOS-8.3.2011-x86_64-boot.iso",
-            "iso_checksum": "sha256:2b801bc5801816d0cf27fc74552cf058951c42c7b72b1fe313429b1070c3876c",
+            "http_directory": "http",
+            "boot_command": [
+                "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+            ],
+            "boot_wait": "4s",
+            "iso_url": "http://mirror.steadfastnet.com/centos/8.3.2011/isos/x86_64/CentOS-8.3.2011-x86_64-dvd1.iso",
+            "iso_checksum": "sha256:aaf9d4b3071c16dbbda01dfe06085e5d0fdac76df323e3bbe87cce4318052247",
             "ssh_username": "vagrant",
             "ssh_password": "vagrant",
-            "shutdown_command": "echo 'vagrant'|sudo -S /sbin/halt -h -p"
+            "ssh_timeout": "10m",
+            "shutdown_command": "echo 'vagrant'|sudo -S /sbin/halt -h -p",
+            "headless": true,
+            "vboxmanage": [
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--memory",
+                    "2048"
+                ],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--cpus",
+                    "2"
+                ],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--vram",
+                    "16"
+                ],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--graphicscontroller",
+                    "vmsvga"
+                ],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--clipboard-mode",
+                    "bidirectional"
+                ],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--draganddrop",
+                    "bidirectional"
+                ]
+            ]
         }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "provision.sh",
+            "execute_command": "echo 'vagrant' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
+        },
+        {
+            "type": "shell",
+            "script": "cleanup.sh",
+            "execute_command": "echo 'vagrant' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
+        }
+    ],
+    "post-processors": [
+        [
+            {
+                "output": "builds/{{.Provider}}-centos8.box",
+                "type": "vagrant"
+            },
+            {
+                "type": "shell-local",
+                "inline": [
+                    "vagrant box add builds\\virtualbox-centos8.box --force --name local/centos-8"
+                ]
+            },
+            {
+                "type": "vagrant-cloud",
+                "box_tag": "skalinkin/centos-8",
+                "version": "2021.18.0",
+                "version_description": "VirtualBox 6.1.16, Vagrant 2.2.14, Packer 1.6.6, Linux 4.18.0-240.1.1.el8_3.x86_64"
+            }
+        ]
     ]
 }

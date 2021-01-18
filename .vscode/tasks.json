@@ -1,0 +1,65 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build the box",
+            "type": "shell",
+            "command": "packer build -force -except=vagrant-cloud centos-8-from-iso.json",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build and Publish the box",
+            "type": "shell",
+            "command": "packer build -force centos-8-from-iso.json",
+            "problemMatcher": []
+        },
+        {
+            "label": "End to End Test",
+            "type": "shell",
+            "command": "echo Test finished.",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/test"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "dependsOn": ["Destroy the box", "Build the box", "Up the box"],
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "Up the box",
+            "type": "shell",
+            "command": "vagrant up",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/test"
+            }
+        },
+        {
+            "label": "Update the box",
+            "type": "shell",
+            "command": "vagrant box update",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/test"
+            }
+        },
+        {
+            "label": "Destroy the box",
+            "type": "shell",
+            "command": "vagrant destroy --force",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/test"
+            }
+        }
+    ]
+}
